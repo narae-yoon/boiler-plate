@@ -4,6 +4,7 @@ const port = 5000;
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const { User } = require('./models/User');
+const config = require('./config/key');
 
 // application/x-www-form-unlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -11,15 +12,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 mongoose // mongoDB 연결
-  .connect(
-    'mongodb+srv://narae:narae@cluster0.un05t.mongodb.net/narae-db?retryWrites=true&w=majority',
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
-    }
-  )
+  .connect(config.mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+  })
   .then(() => console.log('MongoDB Connected...'))
   .catch((err) => console.log(err));
 
