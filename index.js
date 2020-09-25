@@ -1,10 +1,16 @@
-const express = require('express'); // express 모듈 가져오기
-const app = express(); // 새로운 express app 만들기
+const express = require('express');
+const app = express();
 const port = 5000;
-
-// mongoDB 연결
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-mongoose
+const { User } = require('./models/User');
+
+// application/x-www-form-unlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
+// application/json
+app.use(bodyParser.json());
+
+mongoose // mongoDB 연결
   .connect(
     'mongodb+srv://narae:narae@cluster0.un05t.mongodb.net/narae-db?retryWrites=true&w=majority',
     {
@@ -17,8 +23,17 @@ mongoose
   .then(() => console.log('MongoDB Connected...'))
   .catch((err) => console.log(err));
 
-// root 디렉토리에 Hello World! 출력
 app.get('/', (req, res) => res.send('Hello World!'));
+app.post('/register', (req, res) => {
+  // 회원가입
+  // 회원 가입에 필요한 정보를 client에서 가져오면 그 정보를 db에 넣는다.
+  const user = new User(req.body);
+  user.save((err, doc) => {
+    // 가져온 정보를 User 모델에 저장
+    if (err) return res.json({ success: false, err });
+    return res.status(200).json({ success: true });
+  });
+});
 
 // 5000번 포트에서 앱 실행
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
