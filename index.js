@@ -24,7 +24,7 @@ mongoose // mongoDB 연결
   .catch((err) => console.log(err));
 
 app.get('/', (req, res) => res.send('Hello World! nodemon test'));
-app.post('/register', (req, res) => {
+app.post('api/users/register', (req, res) => {
   // 회원가입
   // 회원 가입에 필요한 정보를 client에서 가져오면 그 정보를 db에 넣는다.
   const user = new User(req.body);
@@ -35,7 +35,7 @@ app.post('/register', (req, res) => {
   });
 });
 
-app.post('/login', (req, res) => {
+app.post('api/users/login', (req, res) => {
   // 1. 요청된 이메일이 DB에 있는지 찾기
   User.findOne({ email: req.body.email }, (err, user) => {
     if (!user) {
