@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const { User } = require('./models/User');
+const { auth } = require('./middleware/auth');
 const config = require('./config/key');
 
 // application/x-www-form-unlencoded
@@ -62,6 +63,20 @@ app.post('api/users/login', (req, res) => {
         });
       });
     });
+  });
+});
+
+app.get('api/users/auth', auth, (req, res) => {
+  // middleware를 통과해 이 함수 내부로 왔다 ===  Authentication이 true
+  res.status(200).json({
+    _id: req.user._id,
+    isAdmin: req.user.role === 0 ? false : true,
+    isAuth: true,
+    email: req.user.email,
+    name: req.user.name,
+    lastname: req.user.lastname,
+    role: req.user.role,
+    image: req.user.image,
   });
 });
 
