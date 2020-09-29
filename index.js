@@ -25,7 +25,7 @@ mongoose // mongoDB 연결
   .catch((err) => console.log(err));
 
 app.get('/', (req, res) => res.send('Hello World! nodemon test'));
-app.post('api/users/register', (req, res) => {
+app.post('/api/users/register', (req, res) => {
   // 회원가입
   // 회원 가입에 필요한 정보를 client에서 가져오면 그 정보를 db에 넣는다.
   const user = new User(req.body);
@@ -36,7 +36,7 @@ app.post('api/users/register', (req, res) => {
   });
 });
 
-app.post('api/users/login', (req, res) => {
+app.post('/api/users/login', (req, res) => {
   // 1. 요청된 이메일이 DB에 있는지 찾기
   User.findOne({ email: req.body.email }, (err, user) => {
     if (!user) {
@@ -66,7 +66,7 @@ app.post('api/users/login', (req, res) => {
   });
 });
 
-app.get('api/users/auth', auth, (req, res) => {
+app.get('/api/users/auth', auth, (req, res) => {
   // middleware를 통과해 이 함수 내부로 왔다 ===  Authentication이 true
   res.status(200).json({
     _id: req.user._id,
@@ -77,6 +77,16 @@ app.get('api/users/auth', auth, (req, res) => {
     lastname: req.user.lastname,
     role: req.user.role,
     image: req.user.image,
+  });
+});
+
+app.get('/api/users/logout', auth, (req, res) => {
+  // 로그아웃 하려는 유저의 토큰을 삭제함
+  User.findOneAndUpdate({ _id: req.user._id }, { token: '' }, (err, user) => {
+    if (err) return res.json({ success: false, err });
+    return res.status(200).send({
+      success: true,
+    });
   });
 });
 
